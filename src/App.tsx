@@ -1,6 +1,8 @@
+import Form from './components/common/Form'
+
 const App = () => (
   <div>
-    <h1>Hi there!!!</h1>
+    <Form />
   </div>
 )
 
