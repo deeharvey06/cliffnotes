@@ -18,23 +18,20 @@ const useForm = () => {
     async (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault()
 
-      // const result = await esbuild?.transform(input, {
-      //   loader: 'jsx',
-      //   target: 'es2015',
-      // })
-
-      // setCode(result?.code || '')
-
       const result = await esbuild?.build({
         entryPoints: ['index.js'],
         bundle: true,
         write: false,
         plugins: [unpkgPathPlugin()],
+        define: {
+          'process.env.NODE_ENV': '"production"',
+          global: 'window',
+        },
       })
 
       setCode(result?.outputFiles[0].text || '')
     },
-    [esbuild, input]
+    [esbuild]
   )
 
   return { input, code, handleChange, handleClick }
