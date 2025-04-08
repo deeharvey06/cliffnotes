@@ -1,7 +1,6 @@
 import * as esbuild from 'esbuild-wasm'
-import axios from 'axios'
 
-export const unpkgPathPlugin = () => {
+const unpkgPathPlugin = () => {
   return {
     name: 'unpkg-path-plugin',
     setup(build: esbuild.PluginBuild) {
@@ -27,28 +26,8 @@ export const unpkgPathPlugin = () => {
           path: `https://unpkg.com/${args.path}`,
         }
       })
-
-      build.onLoad({ filter: /.*/ }, async (args: any) => {
-        console.log('onLoad', args)
-
-        if (args.path === 'index.js') {
-          return {
-            loader: 'jsx',
-            contents: `
-              const message = require('react');
-              console.log(message);
-            `,
-          }
-        }
-
-        const { data, request } = await axios.get(args.path)
-
-        return {
-          loader: 'jsx',
-          contents: data,
-          resolveDir: new URL('./', request.responseURL).pathname,
-        }
-      })
     },
   }
 }
+
+export default unpkgPathPlugin
