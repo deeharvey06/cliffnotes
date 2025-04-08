@@ -1,7 +1,6 @@
 import { useState, useCallback, ChangeEvent, MouseEvent } from 'react'
 
 import useEsbuild from '../../../../hooks/useEsbuild'
-// import { unpkgPathPlugin } from '../../../../config/esbuild/plugins/unpkg-path-plugin'
 
 const useForm = () => {
   const [input, setInput] = useState<string>('')
