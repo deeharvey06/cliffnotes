@@ -3,7 +3,7 @@ import { FC } from 'react'
 import useForm from './hooks/useForm'
 
 const Form: FC = () => {
-  const { input, code, handleChange, handleClick } = useForm()
+  const { input, iframeHtml, iframeRef, handleChange, handleClick } = useForm()
 
   return (
     <div>
@@ -13,7 +13,12 @@ const Form: FC = () => {
         <button onClick={handleClick}>Submit</button>
       </div>
 
-      <pre>{code}</pre>
+      <iframe
+        ref={iframeRef}
+        title='code'
+        srcDoc={iframeHtml}
+        sandbox='allow-scripts'
+      />
     </div>
   )
 }
