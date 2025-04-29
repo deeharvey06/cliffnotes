@@ -73,4 +73,3 @@ const fetchPlugin = (inputCode: string) => {
 }
 
 export default fetchPlugin
-//import 'bulma/css/bulma.css'

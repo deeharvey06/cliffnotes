@@ -1,4 +1,4 @@
-import { useState, useCallback, ChangeEvent, MouseEvent } from 'react'
+import { useState, useCallback, ChangeEvent, MouseEvent, useRef } from 'react'
 
 import useEsbuild from '../../../../hooks/useEsbuild'
 import fetchPlugin from '../../../../config/esbuild/plugins/fetch-plugin'
@@ -6,8 +6,28 @@ import unpkgPathPlugin from '../../../../config/esbuild/plugins/unpkg-path-plugi
 
 const useForm = () => {
   const [input, setInput] = useState<string>('')
-  const [code, setCode] = useState('')
+  const iframeRef = useRef<any>()
   const { esbuild } = useEsbuild()
+
+  const iframeHtml = `
+    <html>
+      <head></head>
+      <body>
+        <div id='root'></div>
+        <script>
+          window.addEventListener('message',(event) => {
+            try {
+              eval(event.data);
+            } catch (err) {
+              const root = document.querySelector('#root')
+              root.innerHTML = '<div style="color: red;"><h4> Runtime Error:</h4>' + err + '</div>'
+              throw err;
+            }
+          }, false)
+        </script>
+      </body>
+    </html>
+  `
 
   const handleChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target
@@ -18,6 +38,8 @@ const useForm = () => {
   const handleClick = useCallback(
     async (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault()
+
+      iframeRef.current.srcdoc = iframeHtml
 
       const result = await esbuild?.build({
         entryPoints: ['index.js'],
@@ -30,12 +52,15 @@ const useForm = () => {
         },
       })
 
-      setCode(result?.outputFiles[0].text || '')
+      iframeRef.current.contentWindow.postMessage(
+        result?.outputFiles[0].text,
+        '*'
+      )
     },
-    [esbuild, input]
+    [input, iframeHtml, esbuild]
   )
 
-  return { input, code, handleChange, handleClick }
+  return { input, iframeHtml, iframeRef, handleChange, handleClick }
 }
 
 export default useForm
