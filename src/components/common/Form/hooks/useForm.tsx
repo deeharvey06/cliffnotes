@@ -1,4 +1,10 @@
 import { useState, useCallback, ChangeEvent, MouseEvent, useRef } from 'react'
+import { EditorDidMount } from '@monaco-editor/react'
+import prettier from 'prettier/standalone'
+import babel from 'prettier/plugins/babel'
+import estree from 'prettier/plugins/estree'
+import codeShift from 'jscodeshift'
+import Highlighter from 'monaco-jsx-highlighter'
 
 import useEsbuild from '../../../../hooks/useEsbuild'
 import fetchPlugin from '../../../../config/esbuild/plugins/fetch-plugin'
@@ -6,7 +12,10 @@ import unpkgPathPlugin from '../../../../config/esbuild/plugins/unpkg-path-plugi
 
 const useForm = () => {
   const [input, setInput] = useState<string>('')
+  const [codeEditor, setCodeEditor] = useState<string>('')
   const iframeRef = useRef<any>()
+  const editorRef = useRef<any>()
+
   const { esbuild } = useEsbuild()
 
   const iframeHtml = `
@@ -60,7 +69,62 @@ const useForm = () => {
     [input, iframeHtml, esbuild]
   )
 
-  return { input, iframeHtml, iframeRef, handleChange, handleClick }
+  const handleCodeEditorChange: EditorDidMount = useCallback(
+    (getValue, monacoEditor) => {
+      editorRef.current = monacoEditor
+
+      monacoEditor.onDidChangeModelContent(() => {
+        const value = getValue()
+        setCodeEditor(value)
+      })
+
+      monacoEditor.getModel()?.updateOptions({
+        tabSize: 2,
+      })
+
+      const highlighter = new Highlighter(
+        //@ts-ignore
+        window.monaco,
+        codeShift,
+        monacoEditor
+      )
+
+      highlighter.highLightOnDidChangeModelContent(
+        () => {},
+        () => {},
+        undefined,
+        () => {}
+      )
+    },
+    []
+  )
+
+  const handleFormatClick = useCallback(async () => {
+    const unformatted = editorRef.current.getModel().getValue()
+
+    let formatted = await prettier.format(unformatted, {
+      parser: 'babel',
+      plugins: [babel, estree],
+      useTabs: false,
+      semi: true,
+      singleQuote: true,
+    })
+
+    formatted = formatted.replace(/\n$/, '')
+
+    editorRef.current.setValue(formatted)
+  }, [editorRef])
+
+  return {
+    input,
+    codeEditor,
+    iframeHtml,
+    iframeRef,
+    handleChange,
+    handleClick,
+    handleCodeEditorChange,
+    handleFormatClick,
+  }
 }
 
 export default useForm
