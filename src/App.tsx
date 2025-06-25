@@ -1,10 +1,11 @@
-import 'bulmaswatch/superhero/bulmaswatch.min.css'
+import CodeCell from './components/CodeCell'
 
-import Form from './components/common/Form'
+import 'bulmaswatch/superhero/bulmaswatch.min.css'
 
 const App = () => (
   <div>
-    <Form />
+    <CodeCell />
+    <CodeCell />
   </div>
 )
 
