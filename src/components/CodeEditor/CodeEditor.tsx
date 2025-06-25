@@ -1,31 +1,30 @@
 import { FC } from 'react'
-import MonacoEditor, { EditorDidMount } from '@monaco-editor/react'
+import MonacoEditor from '@monaco-editor/react'
+
+import useCodeEditor from './hooks/useCodeEditor'
 
 import './syntax.css'
 import './styles.css'
 
-interface CodeEditorProps {
+export interface CodeEditorProps {
   initialValue: string
-  onChange: EditorDidMount
-  onFormatClick: () => void
+  onChange(value: string): void
 }
 
-const CodeEditor: FC<CodeEditorProps> = ({
-  initialValue,
-  onChange,
-  onFormatClick,
-}) => {
+const CodeEditor: FC<CodeEditorProps> = ({ initialValue, onChange }) => {
+  const { handleCodeEditorChange, handleFormatClick } = useCodeEditor(onChange)
+
   return (
     <div className='editor-wrapper'>
       <button
         className='button button-format is-primary is-small'
-        onClick={onFormatClick}
+        onClick={handleFormatClick}
       >
         Format
       </button>
 
       <MonacoEditor
-        editorDidMount={onChange}
+        editorDidMount={handleCodeEditorChange}
         value={initialValue}
         language='javascript'
         theme='dark'
