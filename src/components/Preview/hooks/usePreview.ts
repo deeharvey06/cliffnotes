@@ -25,7 +25,13 @@ const usePreview = (code: string) => {
 
   useEffect(() => {
     iframeRef.current.srcdoc = iframeHtml
-    iframeRef.current.contentWindow.postMessage(code, '*')
+    const timer = setTimeout(() => {
+      iframeRef.current.contentWindow.postMessage(code, '*')
+    }, 50)
+
+    return () => {
+      clearTimeout(timer)
+    }
   }, [code])
 
   return {

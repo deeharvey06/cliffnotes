@@ -2,29 +2,29 @@ import { FC } from 'react'
 
 import CodeEditor from '../CodeEditor'
 import Preview from '../Preview'
+import Resizable from '../Resizable'
 
 import useCodeCell from './hooks/useCodeCell'
+
+import './styles.css'
 
 interface CodeCellProps {}
 
 const CodeCell: FC<CodeCellProps> = () => {
-  const { code, handleChangeCodeEditor, handleClick } = useCodeCell()
+  const { code, handleChangeCodeEditor } = useCodeCell()
 
   return (
-    <div className='code-cell'>
-      <CodeEditor
-        initialValue={'const a = 1;'}
-        onChange={handleChangeCodeEditor}
-      />
-
-      <div>
-        <button className='button is-primary' onClick={handleClick}>
-          Submit
-        </button>
+    <Resizable direction='vertical'>
+      <div className='code-cell'>
+        <Resizable direction='horizontal'>
+          <CodeEditor
+            initialValue={'const a = 1;'}
+            onChange={handleChangeCodeEditor}
+          />
+        </Resizable>
+        <Preview code={code} />
       </div>
-
-      <Preview code={code} />
-    </div>
+    </Resizable>
   )
 }
 

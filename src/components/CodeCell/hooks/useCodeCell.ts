@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import useEsbuild from '../../../hooks/useEsbuild'
 
@@ -12,20 +12,25 @@ const useCodeCell = () => {
     setInput(value)
   }, [])
 
-  const handleClick = useCallback(async () => {
-    const output = await buildService(input)
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      const output = await buildService(input)
 
-    if (output) {
-      setCode(output)
-    } else {
-      console.error('Esbuild failed to build the code.')
-    }
+      if (output) {
+        setCode(output)
+      } else {
+        console.error('Esbuild failed to build the code.')
+      }
+
+      return () => {
+        clearTimeout(timer)
+      }
+    }, 1000)
   }, [input, buildService])
 
   return {
     code,
     handleChangeCodeEditor,
-    handleClick,
   }
 }
 
