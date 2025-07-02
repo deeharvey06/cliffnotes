@@ -4,6 +4,7 @@ import useEsbuild from '../../../hooks/useEsbuild'
 
 const useCodeCell = () => {
   const [code, setCode] = useState<string>('')
+  const [err, setErr] = useState<string>('')
   const [input, setInput] = useState<string>('')
 
   const { buildService } = useEsbuild()
@@ -16,11 +17,8 @@ const useCodeCell = () => {
     const timer = setTimeout(async () => {
       const output = await buildService(input)
 
-      if (output) {
-        setCode(output)
-      } else {
-        console.error('Esbuild failed to build the code.')
-      }
+      setCode(output.code)
+      setErr(output.err)
 
       return () => {
         clearTimeout(timer)
@@ -30,6 +28,7 @@ const useCodeCell = () => {
 
   return {
     code,
+    err,
     handleChangeCodeEditor,
   }
 }

@@ -5,9 +5,10 @@ import './styles.css'
 
 interface PreviewProps {
   code: string
+  bundlingStatus: string
 }
 
-const Preview: FC<PreviewProps> = ({ code }) => {
+const Preview: FC<PreviewProps> = ({ code, bundlingStatus }) => {
   const { iframeRef, iframeHtml } = usePreview(code)
 
   return (
@@ -18,6 +19,8 @@ const Preview: FC<PreviewProps> = ({ code }) => {
         sandbox='allow-scripts'
         srcDoc={iframeHtml}
       />
+
+      {bundlingStatus && <div className='preview-error'>{bundlingStatus}</div>}
     </div>
   )
 }
