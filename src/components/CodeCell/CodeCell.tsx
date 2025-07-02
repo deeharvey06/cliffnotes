@@ -11,7 +11,7 @@ import './styles.css'
 interface CodeCellProps {}
 
 const CodeCell: FC<CodeCellProps> = () => {
-  const { code, handleChangeCodeEditor } = useCodeCell()
+  const { code, err, handleChangeCodeEditor } = useCodeCell()
 
   return (
     <Resizable direction='vertical'>
@@ -22,7 +22,7 @@ const CodeCell: FC<CodeCellProps> = () => {
             onChange={handleChangeCodeEditor}
           />
         </Resizable>
-        <Preview code={code} />
+        <Preview code={code} bundlingStatus={err} />
       </div>
     </Resizable>
   )
