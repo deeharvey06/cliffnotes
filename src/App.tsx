@@ -1,10 +1,11 @@
-import CodeCell from './components/CodeCell'
+// import CodeCell from './components/CodeCell'
+import TextEditor from './components/TextEditor'
 
 import 'bulmaswatch/superhero/bulmaswatch.min.css'
 
 const App = () => (
   <div>
-    <CodeCell />
+    <TextEditor />
   </div>
 )
 
